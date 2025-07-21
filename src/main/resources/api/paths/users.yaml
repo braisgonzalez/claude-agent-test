@@ -1,0 +1,128 @@
+users:
+  get:
+    tags:
+      - Users
+    summary: Get all users
+    description: Retrieve a paginated list of users
+    parameters:
+      - $ref: '../components/parameters/PaginationParams.yaml#/PageParameter'
+      - $ref: '../components/parameters/PaginationParams.yaml#/SizeParameter'
+      - $ref: '../components/parameters/SortingParams.yaml#/SortParameter'
+    responses:
+      '200':
+        description: List of users
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/User.yaml#/UserPage'
+      '400':
+        $ref: '../components/responses/ErrorResponses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses/ErrorResponses.yaml#/Unauthorized'
+      '500':
+        $ref: '../components/responses/ErrorResponses.yaml#/InternalServerError'
+  
+  post:
+    tags:
+      - Users
+    summary: Create a new user
+    description: Create a new user with the provided information
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/User.yaml#/CreateUserRequest'
+    responses:
+      '201':
+        description: User created successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/User.yaml#/User'
+      '400':
+        $ref: '../components/responses/ErrorResponses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses/ErrorResponses.yaml#/Unauthorized'
+      '409':
+        description: User with username or email already exists
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/Error.yaml#/Error'
+      '500':
+        $ref: '../components/responses/ErrorResponses.yaml#/InternalServerError'
+
+users_by_id:
+  get:
+    tags:
+      - Users
+    summary: Get user by ID
+    description: Retrieve a specific user by their ID
+    parameters:
+      - $ref: '../components/parameters/PaginationParams.yaml#/UserIdParameter'
+    responses:
+      '200':
+        description: User details
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/User.yaml#/User'
+      '401':
+        $ref: '../components/responses/ErrorResponses.yaml#/Unauthorized'
+      '404':
+        $ref: '../components/responses/ErrorResponses.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses/ErrorResponses.yaml#/InternalServerError'
+  
+  put:
+    tags:
+      - Users
+    summary: Update user
+    description: Update an existing user with the provided information
+    parameters:
+      - $ref: '../components/parameters/PaginationParams.yaml#/UserIdParameter'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/User.yaml#/UpdateUserRequest'
+    responses:
+      '200':
+        description: User updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/User.yaml#/User'
+      '400':
+        $ref: '../components/responses/ErrorResponses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses/ErrorResponses.yaml#/Unauthorized'
+      '404':
+        $ref: '../components/responses/ErrorResponses.yaml#/NotFound'
+      '409':
+        description: Email already exists for another user
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/Error.yaml#/Error'
+      '500':
+        $ref: '../components/responses/ErrorResponses.yaml#/InternalServerError'
+  
+  delete:
+    tags:
+      - Users
+    summary: Delete user
+    description: Delete a specific user by their ID
+    parameters:
+      - $ref: '../components/parameters/PaginationParams.yaml#/UserIdParameter'
+    responses:
+      '204':
+        description: User deleted successfully
+      '401':
+        $ref: '../components/responses/ErrorResponses.yaml#/Unauthorized'
+      '404':
+        $ref: '../components/responses/ErrorResponses.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses/ErrorResponses.yaml#/InternalServerError'
