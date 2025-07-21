@@ -1,0 +1,141 @@
+customers:
+  get:
+    tags:
+      - Customers
+    summary: Get all customers
+    description: Retrieve a paginated list of customers
+    parameters:
+      - $ref: '../components/parameters/PaginationParams.yaml#/PageParameter'
+      - $ref: '../components/parameters/PaginationParams.yaml#/SizeParameter'
+      - $ref: '../components/parameters/SortingParams.yaml#/SortParameter'
+      - name: status
+        in: query
+        description: Filter by customer status
+        required: false
+        schema:
+          type: string
+          enum: [ACTIVE, INACTIVE, PROSPECT]
+      - name: industry
+        in: query
+        description: Filter by industry
+        required: false
+        schema:
+          type: string
+    responses:
+      '200':
+        description: List of customers
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/Customer.yaml#/CustomerPage'
+      '400':
+        $ref: '../components/responses/ErrorResponses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses/ErrorResponses.yaml#/Unauthorized'
+      '500':
+        $ref: '../components/responses/ErrorResponses.yaml#/InternalServerError'
+  
+  post:
+    tags:
+      - Customers
+    summary: Create a new customer
+    description: Create a new customer with the provided information
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/Customer.yaml#/CreateCustomerRequest'
+    responses:
+      '201':
+        description: Customer created successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/Customer.yaml#/Customer'
+      '400':
+        $ref: '../components/responses/ErrorResponses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses/ErrorResponses.yaml#/Unauthorized'
+      '409':
+        description: Customer with email already exists
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/Error.yaml#/Error'
+      '500':
+        $ref: '../components/responses/ErrorResponses.yaml#/InternalServerError'
+
+customers_by_id:
+  get:
+    tags:
+      - Customers
+    summary: Get customer by ID
+    description: Retrieve a specific customer by their ID
+    parameters:
+      - $ref: '../components/parameters/PaginationParams.yaml#/CustomerIdParameter'
+    responses:
+      '200':
+        description: Customer details
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/Customer.yaml#/Customer'
+      '401':
+        $ref: '../components/responses/ErrorResponses.yaml#/Unauthorized'
+      '404':
+        $ref: '../components/responses/ErrorResponses.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses/ErrorResponses.yaml#/InternalServerError'
+  
+  put:
+    tags:
+      - Customers
+    summary: Update customer
+    description: Update an existing customer with the provided information
+    parameters:
+      - $ref: '../components/parameters/PaginationParams.yaml#/CustomerIdParameter'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/Customer.yaml#/UpdateCustomerRequest'
+    responses:
+      '200':
+        description: Customer updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/Customer.yaml#/Customer'
+      '400':
+        $ref: '../components/responses/ErrorResponses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses/ErrorResponses.yaml#/Unauthorized'
+      '404':
+        $ref: '../components/responses/ErrorResponses.yaml#/NotFound'
+      '409':
+        description: Email already exists for another customer
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/Error.yaml#/Error'
+      '500':
+        $ref: '../components/responses/ErrorResponses.yaml#/InternalServerError'
+  
+  delete:
+    tags:
+      - Customers
+    summary: Delete customer
+    description: Delete a specific customer by their ID
+    parameters:
+      - $ref: '../components/parameters/PaginationParams.yaml#/CustomerIdParameter'
+    responses:
+      '204':
+        description: Customer deleted successfully
+      '401':
+        $ref: '../components/responses/ErrorResponses.yaml#/Unauthorized'
+      '404':
+        $ref: '../components/responses/ErrorResponses.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses/ErrorResponses.yaml#/InternalServerError'

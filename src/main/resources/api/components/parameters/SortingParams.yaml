@@ -1,0 +1,12 @@
+SortParameter:
+  name: sort
+  in: query
+  description: Sorting criteria in the format "property,direction" (e.g., "firstName,asc")
+  required: false
+  schema:
+    type: array
+    items:
+      type: string
+      pattern: '^[a-zA-Z][a-zA-Z0-9]*,(asc|desc)$'
+  style: form
+  explode: true

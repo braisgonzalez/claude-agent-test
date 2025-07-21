@@ -1,0 +1,174 @@
+Customer:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+      readOnly: true
+      description: Unique identifier for the customer
+    companyName:
+      type: string
+      minLength: 1
+      maxLength: 255
+      description: Company name
+    contactPerson:
+      type: string
+      minLength: 1
+      maxLength: 255
+      description: Contact person name
+    email:
+      type: string
+      format: email
+      maxLength: 255
+      description: Contact email address
+    phone:
+      type: string
+      maxLength: 20
+      pattern: '^[\+]?[1-9][\d]{0,15}$'
+      description: Phone number
+    address:
+      $ref: '#/Address'
+    industry:
+      type: string
+      maxLength: 100
+      description: Industry sector
+    status:
+      type: string
+      enum: [ACTIVE, INACTIVE, PROSPECT]
+      description: Customer status
+    createdAt:
+      type: string
+      format: date-time
+      readOnly: true
+      description: When the customer was created
+    updatedAt:
+      type: string
+      format: date-time
+      readOnly: true
+      description: When the customer was last updated
+  required:
+    - id
+    - companyName
+    - contactPerson
+    - email
+    - status
+    - createdAt
+    - updatedAt
+
+Address:
+  type: object
+  properties:
+    street:
+      type: string
+      minLength: 1
+      maxLength: 255
+      description: Street address
+    city:
+      type: string
+      minLength: 1
+      maxLength: 100
+      description: City
+    state:
+      type: string
+      maxLength: 100
+      description: State or province
+    zipCode:
+      type: string
+      maxLength: 20
+      description: ZIP or postal code
+    country:
+      type: string
+      minLength: 1
+      maxLength: 100
+      description: Country
+  required:
+    - street
+    - city
+    - country
+
+CreateCustomerRequest:
+  type: object
+  properties:
+    companyName:
+      type: string
+      minLength: 1
+      maxLength: 255
+      description: Company name
+    contactPerson:
+      type: string
+      minLength: 1
+      maxLength: 255
+      description: Contact person name
+    email:
+      type: string
+      format: email
+      maxLength: 255
+      description: Contact email address
+    phone:
+      type: string
+      maxLength: 20
+      pattern: '^[\+]?[1-9][\d]{0,15}$'
+      description: Phone number
+    address:
+      $ref: '#/Address'
+    industry:
+      type: string
+      maxLength: 100
+      description: Industry sector
+    status:
+      type: string
+      enum: [ACTIVE, INACTIVE, PROSPECT]
+      default: PROSPECT
+      description: Customer status
+  required:
+    - companyName
+    - contactPerson
+    - email
+    - address
+
+UpdateCustomerRequest:
+  type: object
+  properties:
+    companyName:
+      type: string
+      minLength: 1
+      maxLength: 255
+      description: Company name
+    contactPerson:
+      type: string
+      minLength: 1
+      maxLength: 255
+      description: Contact person name
+    email:
+      type: string
+      format: email
+      maxLength: 255
+      description: Contact email address
+    phone:
+      type: string
+      maxLength: 20
+      pattern: '^[\+]?[1-9][\d]{0,15}$'
+      description: Phone number
+    address:
+      $ref: '#/Address'
+    industry:
+      type: string
+      maxLength: 100
+      description: Industry sector
+    status:
+      type: string
+      enum: [ACTIVE, INACTIVE, PROSPECT]
+      description: Customer status
+
+CustomerPage:
+  type: object
+  properties:
+    content:
+      type: array
+      items:
+        $ref: '#/Customer'
+    page:
+      $ref: './Error.yaml#/PageInfo'
+  required:
+    - content
+    - page

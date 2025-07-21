@@ -1,0 +1,38 @@
+PageParameter:
+  name: page
+  in: query
+  description: Page number (0-based)
+  required: false
+  schema:
+    type: integer
+    minimum: 0
+    default: 0
+
+SizeParameter:
+  name: size
+  in: query
+  description: Number of items per page
+  required: false
+  schema:
+    type: integer
+    minimum: 1
+    maximum: 100
+    default: 20
+
+UserIdParameter:
+  name: id
+  in: path
+  description: User ID
+  required: true
+  schema:
+    type: string
+    format: uuid
+
+CustomerIdParameter:
+  name: id
+  in: path
+  description: Customer ID
+  required: true
+  schema:
+    type: string
+    format: uuid

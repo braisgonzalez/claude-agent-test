@@ -1,0 +1,86 @@
+Error:
+  type: object
+  properties:
+    message:
+      type: string
+      description: Error message
+    code:
+      type: string
+      description: Error code
+    timestamp:
+      type: string
+      format: date-time
+      description: When the error occurred
+    path:
+      type: string
+      description: Request path that caused the error
+  required:
+    - message
+    - timestamp
+
+ValidationError:
+  type: object
+  properties:
+    message:
+      type: string
+      description: Error message
+    code:
+      type: string
+      description: Error code
+    timestamp:
+      type: string
+      format: date-time
+      description: When the error occurred
+    path:
+      type: string
+      description: Request path that caused the error
+    fieldErrors:
+      type: array
+      items:
+        type: object
+        properties:
+          field:
+            type: string
+            description: Field name that failed validation
+          message:
+            type: string
+            description: Validation error message
+        required:
+          - field
+          - message
+  required:
+    - message
+    - timestamp
+
+PageInfo:
+  type: object
+  properties:
+    number:
+      type: integer
+      minimum: 0
+      description: Current page number (0-based)
+    size:
+      type: integer
+      minimum: 1
+      description: Page size
+    totalElements:
+      type: integer
+      minimum: 0
+      description: Total number of elements
+    totalPages:
+      type: integer
+      minimum: 0
+      description: Total number of pages
+    first:
+      type: boolean
+      description: Whether this is the first page
+    last:
+      type: boolean
+      description: Whether this is the last page
+  required:
+    - number
+    - size
+    - totalElements
+    - totalPages
+    - first
+    - last
