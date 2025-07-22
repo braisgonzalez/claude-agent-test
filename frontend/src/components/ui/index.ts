@@ -5,3 +5,10 @@ export { Modal } from './Modal';
 export { LoadingSpinner } from './LoadingSpinner';
 export { SearchInput } from './SearchInput';
 export { ConfirmDialog } from './ConfirmDialog';
+export { 
+  Skeleton, 
+  UserTableSkeleton, 
+  CustomerCardSkeleton, 
+  DashboardSkeleton, 
+  FormSkeleton 
+} from './SkeletonLoader';
