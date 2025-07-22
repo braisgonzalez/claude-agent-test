@@ -13,7 +13,19 @@
       "Bash(git reset:*)",
       "Bash(git checkout:*)",
       "Bash(git push:*)",
-      "Bash(gh pr create:*)"
+      "Bash(gh pr create:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(docker-compose logs:*)",
+      "Bash(docker-compose:*)",
+      "Bash(./mvnw compile:*)",
+      "Bash(timeout 30 mvn spring-boot:run -Dspring.profiles.active=dev)",
+      "Bash(curl:*)",
+      "Bash(git fetch:*)",
+      "Bash(git pull:*)",
+      "Bash(npm create:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tailwindcss init:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": []
   }
