@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Menu, User, Settings, Bell, Search, Moon, Sun } from 'lucide-react';
+import { Menu, User, Settings, Search, Moon, Sun } from 'lucide-react';
+import { NotificationsDropdown } from '../ui/NotificationsDropdown';
+import { SearchDropdown } from '../ui/SearchDropdown';
 
 interface HeaderProps {
   onMenuToggle: () => void;
@@ -9,6 +11,7 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMobileMenuOpen }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showMobileSearch, setShowMobileSearch] = useState(false);
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
@@ -30,16 +33,7 @@ export const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMobileMenuOpen }
           </button>
           
           {/* Search bar - hidden on mobile */}
-          <div className="hidden md:flex relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-4 w-4 text-gray-400" />
-            </div>
-            <input
-              type="text"
-              placeholder="Search customers, users..."
-              className="form-input pl-10 pr-4 py-2 w-64 text-sm bg-white/50 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-600/50"
-            />
-          </div>
+          <SearchDropdown className="hidden md:block" />
         </div>
 
         {/* Center - Page title/breadcrumb */}
@@ -57,20 +51,15 @@ export const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMobileMenuOpen }
         {/* Right side - Actions and user menu */}
         <div className="flex items-center space-x-3">
           {/* Mobile search button */}
-          <button className="md:hidden p-2.5 rounded-xl text-gray-600 hover:text-gray-800 hover:bg-white/50 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800/50 transition-all duration-200">
+          <button 
+            className="md:hidden p-2.5 rounded-xl text-gray-600 hover:text-gray-800 hover:bg-white/50 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800/50 transition-all duration-200"
+            onClick={() => setShowMobileSearch(true)}
+          >
             <Search className="w-5 h-5" />
           </button>
 
           {/* Notifications */}
-          <div className="relative">
-            <button className="p-2.5 rounded-xl text-gray-600 hover:text-gray-800 hover:bg-white/50 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800/50 transition-all duration-200 shadow-sm hover:shadow-md">
-              <Bell className="w-5 h-5" />
-              {/* Notification badge */}
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
-                3
-              </span>
-            </button>
-          </div>
+          <NotificationsDropdown />
 
           {/* Dark mode toggle */}
           <button
@@ -123,6 +112,26 @@ export const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMobileMenuOpen }
           </div>
         </div>
       </div>
+
+      {/* Mobile Search Modal */}
+      {showMobileSearch && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50"
+            onClick={() => setShowMobileSearch(false)}
+          />
+          
+          {/* Modal Content */}
+          <div className="relative bg-white dark:bg-gray-800 p-4">
+            <SearchDropdown 
+              isMobile={true}
+              placeholder="Search anything..."
+              className="w-full"
+            />
+          </div>
+        </div>
+      )}
     </header>
   );
 };
