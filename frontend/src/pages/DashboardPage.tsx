@@ -3,7 +3,7 @@ import { Users, UserCheck, Building2, TrendingUp, Plus, ArrowRight, Activity, Da
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { MainLayout, PageHeader } from '../components/layout';
-import { DashboardSkeleton, Button } from '../components/ui';
+import { DashboardSkeleton, Button, ReportsModal, SystemHealthModal, ActivityDetailModal } from '../components/ui';
 import { CustomerForm } from '../components/features/customers';
 import { useUsers } from '../hooks/useUsers';
 import { useCustomers, useCreateCustomer } from '../hooks/useCustomers';
@@ -11,7 +11,9 @@ import type { CustomerFormData } from '../types/customer';
 
 export const DashboardPage: React.FC = () => {
   const [showCreateCustomerModal, setShowCreateCustomerModal] = useState(false);
-  const [, setShowReportsModal] = useState(false);
+  const [showReportsModal, setShowReportsModal] = useState(false);
+  const [showSystemHealthModal, setShowSystemHealthModal] = useState(false);
+  const [showActivityModal, setShowActivityModal] = useState(false);
   
   const { data: usersData, isLoading: usersLoading } = useUsers({ size: 1 });
   const { data: customersData, isLoading: customersLoading } = useCustomers({ size: 1 });
@@ -73,7 +75,6 @@ export const DashboardPage: React.FC = () => {
 
   const handleViewReports = () => {
     setShowReportsModal(true);
-    toast.success('Reports feature coming soon!');
   };
 
   if (isLoading) {
@@ -220,63 +221,97 @@ export const DashboardPage: React.FC = () => {
             </div>
             
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-2xl">
+              <button 
+                onClick={() => setShowSystemHealthModal(true)}
+                className="w-full flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-2xl hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors group"
+              >
                 <div className="flex items-center">
                   <Wifi className="w-5 h-5 text-green-600 dark:text-green-400 mr-3" />
-                  <div>
-                    <p className="font-semibold text-gray-900 dark:text-white">Backend API</p>
+                  <div className="text-left">
+                    <p className="font-semibold text-gray-900 dark:text-white group-hover:text-green-700 dark:group-hover:text-green-300">Backend API</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">Response time: 45ms</p>
                   </div>
                 </div>
-                <span className="badge badge-success">Online</span>
-              </div>
+                <div className="flex items-center space-x-2">
+                  <span className="badge badge-success">Online</span>
+                  <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors" />
+                </div>
+              </button>
               
-              <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-2xl">
+              <button 
+                onClick={() => setShowSystemHealthModal(true)}
+                className="w-full flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-2xl hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors group"
+              >
                 <div className="flex items-center">
                   <Database className="w-5 h-5 text-green-600 dark:text-green-400 mr-3" />
-                  <div>
-                    <p className="font-semibold text-gray-900 dark:text-white">Database</p>
+                  <div className="text-left">
+                    <p className="font-semibold text-gray-900 dark:text-white group-hover:text-green-700 dark:group-hover:text-green-300">Database</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">Connections: 12/100</p>
                   </div>
                 </div>
-                <span className="badge badge-success">Healthy</span>
-              </div>
+                <div className="flex items-center space-x-2">
+                  <span className="badge badge-success">Healthy</span>
+                  <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors" />
+                </div>
+              </button>
             </div>
           </div>
 
           {/* Recent Activity */}
           <div className="card-elevated p-6">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-              Recent Activity
-            </h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                Recent Activity
+              </h3>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setShowActivityModal(true)}
+                className="text-blue-600 hover:text-blue-700 dark:text-blue-400"
+              >
+                View All
+              </Button>
+            </div>
             <div className="space-y-3">
-              <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
+              <button 
+                onClick={() => setShowActivityModal(true)}
+                className="w-full flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors group"
+              >
                 <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                <div className="flex-1 text-left">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400">
                     New user registered
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">2 minutes ago</p>
                 </div>
-              </div>
-              <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
+                <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+              </button>
+              <button 
+                onClick={() => setShowActivityModal(true)}
+                className="w-full flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors group"
+              >
                 <div className="w-2 h-2 bg-green-500 rounded-full" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                <div className="flex-1 text-left">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-400">
                     Customer updated
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">15 minutes ago</p>
                 </div>
-              </div>
-              <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
+                <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors" />
+              </button>
+              <button 
+                onClick={() => setShowActivityModal(true)}
+                className="w-full flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors group"
+              >
                 <div className="w-2 h-2 bg-amber-500 rounded-full" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                <div className="flex-1 text-left">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400">
                     System backup completed
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">1 hour ago</p>
                 </div>
-              </div>
+                <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors" />
+              </button>
             </div>
           </div>
         </div>
@@ -289,6 +324,24 @@ export const DashboardPage: React.FC = () => {
         onSubmit={handleCreateCustomer}
         loading={createCustomerMutation.isPending}
         mode="create"
+      />
+
+      {/* Reports Modal */}
+      <ReportsModal 
+        isOpen={showReportsModal}
+        onClose={() => setShowReportsModal(false)}
+      />
+
+      {/* System Health Modal */}
+      <SystemHealthModal 
+        isOpen={showSystemHealthModal}
+        onClose={() => setShowSystemHealthModal(false)}
+      />
+
+      {/* Activity Detail Modal */}
+      <ActivityDetailModal 
+        isOpen={showActivityModal}
+        onClose={() => setShowActivityModal(false)}
       />
     </MainLayout>
   );

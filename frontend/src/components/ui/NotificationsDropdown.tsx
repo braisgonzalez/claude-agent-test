@@ -3,10 +3,12 @@ import { Bell, Check, ExternalLink, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { mockNotifications, getUnreadCount, getNotificationColors, type Notification } from '../../data/mockNotifications';
 import { Button } from './Button';
+import { NotificationsModal } from './NotificationsModal';
 
 export const NotificationsDropdown: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
+  const [showAllModal, setShowAllModal] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const unreadCount = getUnreadCount(notifications);
@@ -46,6 +48,11 @@ export const NotificationsDropdown: React.FC = () => {
     if (notification.actionUrl) {
       setIsOpen(false);
     }
+  };
+
+  const handleViewAll = () => {
+    setIsOpen(false);
+    setShowAllModal(true);
   };
 
   return (
@@ -135,7 +142,7 @@ export const NotificationsDropdown: React.FC = () => {
               variant="ghost"
               size="sm"
               className="w-full text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-              onClick={() => setIsOpen(false)}
+              onClick={handleViewAll}
             >
               <Eye className="w-4 h-4 mr-2" />
               View all notifications
@@ -143,6 +150,12 @@ export const NotificationsDropdown: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Notifications Modal */}
+      <NotificationsModal 
+        isOpen={showAllModal}
+        onClose={() => setShowAllModal(false)}
+      />
     </div>
   );
 };
