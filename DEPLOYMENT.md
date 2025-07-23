@@ -36,7 +36,7 @@ The deployment uses the following AWS resources:
 - **Region**: us-east-1
 - **S3 Bucket**: brais-claude-code (for frontend)
 - **EC2 Instance**: i-0c5c631508a9d1e93 (172.31.45.188)
-- **RDS Database**: claude-agent-test.ch2aksogwa9r.us-east-1.rds.amazonaws.com
+- **RDS Database**: brais-claude-code.ch2aksogwa9r.us-east-1.rds.amazonaws.com
 - **Security Group**: sg-015054163da20eeea
 
 ## Deployment Pipeline

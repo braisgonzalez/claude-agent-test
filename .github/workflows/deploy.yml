@@ -142,7 +142,7 @@ jobs:
         # Create application properties for production
         cat > deploy/application-prod.properties << EOF
         spring.profiles.active=prod
-        spring.datasource.url=jdbc:postgresql://claude-agent-test.ch2aksogwa9r.us-east-1.rds.amazonaws.com:5432/braisclaud
+        spring.datasource.url=jdbc:postgresql://brais-claude-code.ch2aksogwa9r.us-east-1.rds.amazonaws.com:5432/braisclaude
         spring.datasource.username=postgres
         spring.datasource.password=${{ secrets.RDS_PASSWORD }}
         spring.datasource.driver-class-name=org.postgresql.Driver
