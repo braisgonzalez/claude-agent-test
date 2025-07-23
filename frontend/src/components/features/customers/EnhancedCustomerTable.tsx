@@ -35,7 +35,7 @@ export const EnhancedCustomerTable: React.FC<EnhancedCustomerTableProps> = ({
         await deleteCustomerMutation.mutateAsync(customerToDelete.id);
         setCustomerToDelete(null);
         toast.success(`Customer "${customerToDelete.companyName}" deleted successfully`);
-      } catch (error) {
+      } catch {
         toast.error('Failed to delete customer. Please try again.');
       }
     }
