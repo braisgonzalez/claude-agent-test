@@ -100,7 +100,7 @@ export const EnhancedCustomerTable: React.FC<EnhancedCustomerTableProps> = ({
       sortable: true,
       filterable: true,
       render: (value) => {
-        const statusInfo = formatCustomerStatus(value);
+        const statusInfo = formatCustomerStatus(value as string);
         return (
           <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${statusInfo.className}`}>
             {statusInfo.text}
@@ -116,7 +116,7 @@ export const EnhancedCustomerTable: React.FC<EnhancedCustomerTableProps> = ({
       filterable: true,
       render: (value) => (
         <span className="text-sm text-gray-900 dark:text-white">
-          {value || 'Not specified'}
+          {(value as string) || 'Not specified'}
         </span>
       ),
     },
@@ -128,7 +128,7 @@ export const EnhancedCustomerTable: React.FC<EnhancedCustomerTableProps> = ({
       render: (value) => (
         <div className="flex items-center space-x-1 text-sm text-gray-500 dark:text-gray-400">
           <Calendar className="w-4 h-4" />
-          <span>{formatDate(value)}</span>
+          <span>{formatDate(value as string)}</span>
         </div>
       ),
     },

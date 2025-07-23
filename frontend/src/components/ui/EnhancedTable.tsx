@@ -105,10 +105,14 @@ export function EnhancedTable<T extends { id: string | number }>({
         const aValue = getCellValue(a, column.accessor);
         const bValue = getCellValue(b, column.accessor);
 
-        if (aValue < bValue) {
+        // Convert to string for comparison to handle unknown types safely
+        const aStr = String(aValue ?? '');
+        const bStr = String(bValue ?? '');
+        
+        if (aStr < bStr) {
           return sortConfig.direction === 'asc' ? -1 : 1;
         }
-        if (aValue > bValue) {
+        if (aStr > bStr) {
           return sortConfig.direction === 'asc' ? 1 : -1;
         }
         return 0;
