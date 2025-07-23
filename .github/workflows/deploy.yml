@@ -25,6 +25,11 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
+    - name: Set up Maven
+      uses: stCarolas/setup-maven@v5
+      with:
+        maven-version: 3.9.4
+
     - name: Cache Maven dependencies
       uses: actions/cache@v3
       with:
@@ -34,8 +39,7 @@ jobs:
 
     - name: Run backend tests
       run: |
-        cd backend
-        ./mvnw clean test
+        mvn clean test
 
     - name: Set up Node.js
       uses: actions/setup-node@v4
@@ -114,6 +118,11 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
+    - name: Set up Maven
+      uses: stCarolas/setup-maven@v5
+      with:
+        maven-version: 3.9.4
+
     - name: Cache Maven dependencies
       uses: actions/cache@v3
       with:
@@ -123,8 +132,7 @@ jobs:
 
     - name: Build backend application
       run: |
-        cd backend
-        ./mvnw clean package -DskipTests
+        mvn clean package -DskipTests
         
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
@@ -135,7 +143,6 @@ jobs:
 
     - name: Create deployment package
       run: |
-        cd backend
         mkdir -p deploy
         cp target/*.jar deploy/app.jar
         
@@ -210,7 +217,7 @@ jobs:
         '
         
         # Copy files to EC2
-        scp -i ec2-key.pem -o StrictHostKeyChecking=no backend/deploy/* ec2-user@${{ env.EC2_HOST }}:/home/ec2-user/app/
+        scp -i ec2-key.pem -o StrictHostKeyChecking=no deploy/* ec2-user@${{ env.EC2_HOST }}:/home/ec2-user/app/
         
         # Deploy application
         ssh -i ec2-key.pem -o StrictHostKeyChecking=no ec2-user@${{ env.EC2_HOST }} '
