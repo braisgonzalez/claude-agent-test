@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { 
   ChevronUp, 
   ChevronDown, 
@@ -45,8 +45,8 @@ export function EnhancedTable<T extends { id: string | number }>({
   columns,
   loading = false,
   onRowClick,
-  onEdit,
-  onDelete,
+  onEdit: _onEdit,
+  onDelete: _onDelete,
   expandable = false,
   renderExpandedRow,
   selectable = false,
@@ -60,12 +60,12 @@ export function EnhancedTable<T extends { id: string | number }>({
   const [globalFilter, setGlobalFilter] = useState('');
 
   // Get cell value utility function
-  const getCellValue = (row: T, accessor: keyof T | ((row: T) => unknown)) => {
+  const getCellValue = useCallback((row: T, accessor: keyof T | ((row: T) => unknown)) => {
     if (typeof accessor === 'function') {
       return accessor(row);
     }
     return row[accessor];
-  };
+  }, []);
 
   // Filtered and sorted data
   const processedData = useMemo(() => {
