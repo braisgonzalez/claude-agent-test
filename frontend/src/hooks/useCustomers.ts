@@ -3,6 +3,15 @@ import { customerService } from '../services/customerService';
 import type { CreateCustomerRequest, UpdateCustomerRequest, CustomerFilterParams } from '../types/customer';
 import { toast } from 'react-hot-toast';
 
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+  message?: string;
+}
+
 // Query keys
 export const customerKeys = {
   all: ['customers'] as const,
@@ -41,7 +50,7 @@ export const useCreateCustomer = () => {
       queryClient.invalidateQueries({ queryKey: customerKeys.lists() });
       toast.success(`Customer "${newCustomer.companyName}" created successfully`);
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       const message = error.response?.data?.message || 'Failed to create customer';
       toast.error(message);
     },
@@ -61,7 +70,7 @@ export const useUpdateCustomer = () => {
       queryClient.invalidateQueries({ queryKey: customerKeys.lists() });
       toast.success(`Customer "${updatedCustomer.companyName}" updated successfully`);
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       const message = error.response?.data?.message || 'Failed to update customer';
       toast.error(message);
     },
@@ -80,7 +89,7 @@ export const useDeleteCustomer = () => {
       queryClient.invalidateQueries({ queryKey: customerKeys.lists() });
       toast.success('Customer deleted successfully');
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       const message = error.response?.data?.message || 'Failed to delete customer';
       toast.error(message);
     },

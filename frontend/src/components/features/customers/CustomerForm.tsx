@@ -90,7 +90,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({
     }
   }, [isOpen, customer, reset]);
 
-  const handleFormSubmit = (data: any) => {
+  const handleFormSubmit = (data: CustomerFormData) => {
     // Clean up empty strings to undefined for optional fields
     const cleanData = {
       ...data,

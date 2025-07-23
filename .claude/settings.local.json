@@ -29,7 +29,15 @@
       "Bash(mv:*)",
       "Bash(npm uninstall:*)",
       "Bash(rm:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(gh run list:*)",
+      "Bash(gh run view:*)",
+      "Bash(gh secret:*)",
+      "WebFetch(domain:console.anthropic.com)",
+      "Bash(gh secret set:*)",
+      "Bash(chmod:*)"
     ],
     "deny": []
   }

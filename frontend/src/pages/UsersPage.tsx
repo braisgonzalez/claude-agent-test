@@ -4,7 +4,7 @@ import { MainLayout, PageHeader } from '../components/layout';
 import { SearchInput, Select, Modal, LoadingSpinner } from '../components/ui';
 import { UserTable, UserForm, UserCard } from '../components/features/users';
 import { useUsers, useCreateUser, useUpdateUser } from '../hooks/useUsers';
-import type { User, UserFormData, UserFilterParams } from '../types/user';
+import type { User, UserFormData, UserFilterParams, CreateUserRequest } from '../types/user';
 
 export const UsersPage: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
@@ -44,7 +44,8 @@ export const UsersPage: React.FC = () => {
 
   const handleFormSubmit = (data: UserFormData) => {
     if (editingUser) {
-      // Update existing user
+      // Update existing user - exclude password from updates
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...updateData } = data;
       updateUserMutation.mutate(
         { id: editingUser.id, userData: updateData },
@@ -58,7 +59,7 @@ export const UsersPage: React.FC = () => {
     } else {
       // Create new user
       if (!data.password) return;
-      createUserMutation.mutate(data as any, {
+      createUserMutation.mutate(data as CreateUserRequest, {
         onSuccess: () => {
           setShowForm(false);
         },
