@@ -21,7 +21,7 @@ export const CustomersPage: React.FC = () => {
     size: 20,
     search: searchTerm || undefined,
     industry: industryFilter || undefined,
-    status: statusFilter as any || undefined,
+    status: (statusFilter as 'PROSPECT' | 'ACTIVE' | 'INACTIVE') || undefined,
   }), [currentPage, searchTerm, industryFilter, statusFilter]);
 
   const { data: customersData, isLoading } = useCustomers(filterParams);

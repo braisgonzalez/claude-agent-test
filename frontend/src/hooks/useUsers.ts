@@ -3,6 +3,15 @@ import { userService } from '../services/userService';
 import type { CreateUserRequest, UpdateUserRequest, UserFilterParams } from '../types/user';
 import { toast } from 'react-hot-toast';
 
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+  message?: string;
+}
+
 // Query keys
 export const userKeys = {
   all: ['users'] as const,
@@ -41,7 +50,7 @@ export const useCreateUser = () => {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
       toast.success(`User "${newUser.username}" created successfully`);
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       const message = error.response?.data?.message || 'Failed to create user';
       toast.error(message);
     },
@@ -61,7 +70,7 @@ export const useUpdateUser = () => {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
       toast.success(`User "${updatedUser.username}" updated successfully`);
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       const message = error.response?.data?.message || 'Failed to update user';
       toast.error(message);
     },
@@ -80,7 +89,7 @@ export const useDeleteUser = () => {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
       toast.success('User deleted successfully');
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       const message = error.response?.data?.message || 'Failed to delete user';
       toast.error(message);
     },
