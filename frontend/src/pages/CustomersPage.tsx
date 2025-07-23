@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { Plus } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { MainLayout, PageHeader } from '../components/layout';
 import { SearchInput, Select, Modal, LoadingSpinner } from '../components/ui';
-import { CustomerTable, CustomerForm, CustomerCard } from '../components/features/customers';
+import { EnhancedCustomerTable, CustomerForm, CustomerCard } from '../components/features/customers';
 import { useCustomers, useCreateCustomer, useUpdateCustomer } from '../hooks/useCustomers';
 import type { Customer, CustomerFormData, CustomerFilterParams } from '../types/customer';
 
@@ -14,6 +15,7 @@ export const CustomersPage: React.FC = () => {
   const [industryFilter, setIndustryFilter] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [currentPage] = useState(0);
+  const [, setSelectedCustomers] = useState<Customer[]>([]);
 
   // Build filter params
   const filterParams: CustomerFilterParams = useMemo(() => ({
@@ -67,6 +69,13 @@ export const CustomersPage: React.FC = () => {
   const handleCloseForm = () => {
     setShowForm(false);
     setEditingCustomer(null);
+  };
+
+  const handleSelectionChange = (selected: Customer[]) => {
+    setSelectedCustomers(selected);
+    if (selected.length > 0) {
+      toast.success(`Selected ${selected.length} customer${selected.length > 1 ? 's' : ''}`);
+    }
   };
 
   // Get unique industries from the current data for filter options
@@ -134,10 +143,11 @@ export const CustomersPage: React.FC = () => {
           <LoadingSpinner size="lg" text="Loading customers..." />
         </div>
       ) : (
-        <CustomerTable
+        <EnhancedCustomerTable
           customers={customersData?.content || []}
           onEdit={handleEditCustomer}
           onView={handleViewCustomer}
+          onSelectionChange={handleSelectionChange}
           loading={isLoading}
         />
       )}

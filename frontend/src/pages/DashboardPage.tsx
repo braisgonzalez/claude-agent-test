@@ -1,16 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Users, UserCheck, Building2, TrendingUp, Plus, ArrowRight, Activity, Database, Wifi, BarChart3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { MainLayout, PageHeader } from '../components/layout';
 import { DashboardSkeleton, Button } from '../components/ui';
+import { CustomerForm } from '../components/features/customers';
 import { useUsers } from '../hooks/useUsers';
-import { useCustomers } from '../hooks/useCustomers';
+import { useCustomers, useCreateCustomer } from '../hooks/useCustomers';
+import type { CustomerFormData } from '../types/customer';
 
 export const DashboardPage: React.FC = () => {
+  const [showCreateCustomerModal, setShowCreateCustomerModal] = useState(false);
+  const [, setShowReportsModal] = useState(false);
+  
   const { data: usersData, isLoading: usersLoading } = useUsers({ size: 1 });
   const { data: customersData, isLoading: customersLoading } = useCustomers({ size: 1 });
   const { data: activeCustomersData } = useCustomers({ status: 'ACTIVE', size: 1 });
   const { data: prospectCustomersData } = useCustomers({ status: 'PROSPECT', size: 1 });
+  const createCustomerMutation = useCreateCustomer();
 
   const isLoading = usersLoading || customersLoading;
 
@@ -53,6 +60,22 @@ export const DashboardPage: React.FC = () => {
     },
   ];
 
+  // Event Handlers
+  const handleCreateCustomer = async (data: CustomerFormData) => {
+    try {
+      await createCustomerMutation.mutateAsync(data);
+      setShowCreateCustomerModal(false);
+      toast.success('Customer created successfully!');
+    } catch (error) {
+      toast.error('Failed to create customer. Please try again.');
+    }
+  };
+
+  const handleViewReports = () => {
+    setShowReportsModal(true);
+    toast.success('Reports feature coming soon!');
+  };
+
   if (isLoading) {
     return (
       <MainLayout>
@@ -80,10 +103,10 @@ export const DashboardPage: React.FC = () => {
             </p>
           </div>
           <div className="flex space-x-3">
-            <Button variant="outline" icon={BarChart3}>
+            <Button variant="outline" icon={BarChart3} onClick={handleViewReports}>
               View Reports
             </Button>
-            <Button variant="primary" icon={Plus}>
+            <Button variant="primary" icon={Plus} onClick={() => setShowCreateCustomerModal(true)}>
               Add Customer
             </Button>
           </div>
@@ -258,6 +281,15 @@ export const DashboardPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Customer Creation Modal */}
+      <CustomerForm
+        isOpen={showCreateCustomerModal}
+        onClose={() => setShowCreateCustomerModal(false)}
+        onSubmit={handleCreateCustomer}
+        loading={createCustomerMutation.isPending}
+        mode="create"
+      />
     </MainLayout>
   );
 };
