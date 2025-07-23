@@ -44,8 +44,9 @@ export const UsersPage: React.FC = () => {
 
   const handleFormSubmit = (data: UserFormData) => {
     if (editingUser) {
-      // Update existing user
-      const { password: _, ...updateData } = data;
+      // Update existing user - exclude password from updates
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, ...updateData } = data;
       updateUserMutation.mutate(
         { id: editingUser.id, userData: updateData },
         {
