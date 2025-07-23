@@ -45,7 +45,9 @@ export function EnhancedTable<T extends { id: string | number }>({
   columns,
   loading = false,
   onRowClick,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onEdit: _onEdit,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onDelete: _onDelete,
   expandable = false,
   renderExpandedRow,
