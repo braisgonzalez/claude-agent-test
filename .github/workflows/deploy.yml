@@ -1,0 +1,276 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  AWS_REGION: us-east-1
+  S3_BUCKET: brais-claude-code
+  EC2_INSTANCE_ID: i-0c5c631508a9d1e93
+  EC2_HOST: 172.31.45.188
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Cache Maven dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+
+    - name: Run backend tests
+      run: |
+        cd backend
+        ./mvnw clean test
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+
+    - name: Install frontend dependencies
+      run: |
+        cd frontend
+        npm ci
+
+    - name: Run frontend tests
+      run: |
+        cd frontend
+        npm run lint
+
+  build-frontend:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+
+    - name: Install dependencies
+      run: |
+        cd frontend
+        npm ci
+
+    - name: Build frontend
+      run: |
+        cd frontend
+        npm run build
+      env:
+        VITE_API_BASE_URL: http://${{ env.EC2_HOST }}:8080
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Deploy frontend to S3
+      run: |
+        cd frontend
+        aws s3 sync dist/ s3://${{ env.S3_BUCKET }} --delete
+        
+    - name: Invalidate CloudFront (if using CDN)
+      run: |
+        # Uncomment if using CloudFront
+        # aws cloudfront create-invalidation --distribution-id YOUR_DISTRIBUTION_ID --paths "/*"
+
+  build-and-deploy-backend:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Cache Maven dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+
+    - name: Build backend application
+      run: |
+        cd backend
+        ./mvnw clean package -DskipTests
+        
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Create deployment package
+      run: |
+        cd backend
+        mkdir -p deploy
+        cp target/*.jar deploy/app.jar
+        
+        # Create application properties for production
+        cat > deploy/application-prod.properties << EOF
+        spring.profiles.active=prod
+        spring.datasource.url=jdbc:postgresql://claude-agent-test.ch2aksogwa9r.us-east-1.rds.amazonaws.com:5432/braisclaud
+        spring.datasource.username=postgres
+        spring.datasource.password=${{ secrets.RDS_PASSWORD }}
+        spring.datasource.driver-class-name=org.postgresql.Driver
+        
+        spring.jpa.hibernate.ddl-auto=update
+        spring.jpa.show-sql=false
+        spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+        
+        server.port=8080
+        server.servlet.context-path=/
+        
+        management.endpoints.web.exposure.include=health,info,metrics
+        management.endpoint.health.show-details=always
+        
+        logging.level.root=INFO
+        logging.level.com.company=DEBUG
+        EOF
+        
+        # Create startup script
+        cat > deploy/start-app.sh << EOF
+        #!/bin/bash
+        cd /home/ec2-user/app
+        
+        # Stop existing application
+        sudo pkill -f "java.*app.jar" || true
+        sleep 5
+        
+        # Backup current jar
+        if [ -f app.jar ]; then
+            cp app.jar app-backup.jar
+        fi
+        
+        # Start new application
+        nohup java -jar app.jar --spring.config.location=application-prod.properties > app.log 2>&1 &
+        
+        # Wait for application to start
+        echo "Waiting for application to start..."
+        for i in {1..30}; do
+            if curl -f http://localhost:8080/actuator/health > /dev/null 2>&1; then
+                echo "Application started successfully"
+                exit 0
+            fi
+            echo "Waiting... (\$i/30)"
+            sleep 10
+        done
+        
+        echo "Application failed to start, check app.log"
+        exit 1
+        EOF
+        
+        chmod +x deploy/start-app.sh
+
+    - name: Upload to EC2
+      env:
+        EC2_SSH_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+      run: |
+        # Setup SSH key
+        echo "$EC2_SSH_KEY" > ec2-key.pem
+        chmod 600 ec2-key.pem
+        
+        # Create app directory on EC2
+        ssh -i ec2-key.pem -o StrictHostKeyChecking=no ec2-user@${{ env.EC2_HOST }} '
+          sudo mkdir -p /home/ec2-user/app &&
+          sudo chown ec2-user:ec2-user /home/ec2-user/app
+        '
+        
+        # Copy files to EC2
+        scp -i ec2-key.pem -o StrictHostKeyChecking=no backend/deploy/* ec2-user@${{ env.EC2_HOST }}:/home/ec2-user/app/
+        
+        # Deploy application
+        ssh -i ec2-key.pem -o StrictHostKeyChecking=no ec2-user@${{ env.EC2_HOST }} '
+          cd /home/ec2-user/app &&
+          chmod +x start-app.sh &&
+          ./start-app.sh
+        '
+        
+        # Cleanup
+        rm -f ec2-key.pem
+
+    - name: Verify deployment
+      run: |
+        # Wait a bit for the application to fully start
+        sleep 30
+        
+        # Check health endpoint
+        if curl -f http://${{ env.EC2_HOST }}:8080/actuator/health; then
+          echo "✅ Backend deployment successful!"
+        else
+          echo "❌ Backend deployment failed!"
+          exit 1
+        fi
+
+  verify-deployment:
+    needs: [build-frontend, build-and-deploy-backend]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Verify frontend deployment
+      run: |
+        # Check if S3 website is accessible (if configured for static hosting)
+        echo "Frontend deployed to S3 bucket: ${{ env.S3_BUCKET }}"
+        
+        # If S3 static website hosting is enabled, test it
+        # curl -f http://${{ env.S3_BUCKET }}.s3-website-${{ env.AWS_REGION }}.amazonaws.com/
+        
+    - name: Verify backend deployment
+      run: |
+        echo "Testing backend health endpoint..."
+        if curl -f http://${{ env.EC2_HOST }}:8080/actuator/health; then
+          echo "✅ Backend is healthy!"
+        else
+          echo "❌ Backend health check failed!"
+          exit 1
+        fi
+        
+        echo "Testing API endpoints..."
+        if curl -f -u admin:admin123 http://${{ env.EC2_HOST }}:8080/api/v1/customers; then
+          echo "✅ API endpoints are accessible!"
+        else
+          echo "❌ API endpoints are not accessible!"
+          exit 1
+        fi
+
+    - name: Post deployment summary
+      run: |
+        echo "🚀 Deployment Summary:"
+        echo "📦 Frontend: http://${{ env.S3_BUCKET }}.s3-website-${{ env.AWS_REGION }}.amazonaws.com/"
+        echo "🔗 Backend API: http://${{ env.EC2_HOST }}:8080"
+        echo "💚 Health Check: http://${{ env.EC2_HOST }}:8080/actuator/health"
+        echo "📊 API Docs: http://${{ env.EC2_HOST }}:8080/swagger-ui.html"
