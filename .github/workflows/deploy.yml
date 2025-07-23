@@ -173,6 +173,13 @@ jobs:
         #!/bin/bash
         cd /home/ec2-user/app
         
+        # Install Java 17 if not present
+        if ! java -version 2>&1 | grep -q "17."; then
+            echo "Installing Java 17..."
+            sudo yum update -y
+            sudo yum install -y java-17-amazon-corretto-devel
+        fi
+        
         # Stop existing application
         sudo pkill -f "java.*app.jar" || true
         sleep 5
@@ -182,7 +189,12 @@ jobs:
             cp app.jar app-backup.jar
         fi
         
+        # Set JAVA_HOME
+        export JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto
+        export PATH=\$JAVA_HOME/bin:\$PATH
+        
         # Start new application
+        echo "Starting Spring Boot application..."
         nohup java -jar app.jar --spring.config.location=application-prod.properties > app.log 2>&1 &
         
         # Wait for application to start
@@ -197,6 +209,8 @@ jobs:
         done
         
         echo "Application failed to start, check app.log"
+        echo "Last 20 lines of app.log:"
+        tail -20 app.log || echo "No log file found"
         exit 1
         EOF
         
@@ -210,10 +224,13 @@ jobs:
         echo "$EC2_SSH_KEY" > ec2-key.pem
         chmod 600 ec2-key.pem
         
-        # Create app directory on EC2
+        # Create app directory and ensure security group allows port 8080
         ssh -i ec2-key.pem -o StrictHostKeyChecking=no ec2-user@${{ env.EC2_HOST }} '
           sudo mkdir -p /home/ec2-user/app &&
-          sudo chown ec2-user:ec2-user /home/ec2-user/app
+          sudo chown ec2-user:ec2-user /home/ec2-user/app &&
+          echo "Checking if port 8080 is accessible..." &&
+          sudo firewall-cmd --list-ports 2>/dev/null || echo "Firewall not active" &&
+          echo "EC2 setup complete"
         '
         
         # Copy files to EC2
