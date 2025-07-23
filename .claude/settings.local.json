@@ -40,7 +40,9 @@
       "Bash(chmod:*)",
       "Bash(gh run list:*)",
       "Bash(gh run view:*)",
-      "Bash(./scripts/setup-s3-hosting.sh:*)"
+      "Bash(./scripts/setup-s3-hosting.sh:*)",
+      "Bash(aws ec2:*)",
+      "Bash(rm:*)"
     ],
     "deny": []
   }
