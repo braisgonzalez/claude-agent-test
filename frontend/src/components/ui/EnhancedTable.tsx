@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { 
   ChevronUp, 
   ChevronDown, 
@@ -11,17 +11,17 @@ import {
 import { Input } from './Input';
 import { Button } from './Button';
 
-export interface Column<T = any> {
+export interface Column<T = Record<string, unknown>> {
   id: string;
   header: string;
-  accessor: keyof T | ((row: T) => any);
+  accessor: keyof T | ((row: T) => unknown);
   sortable?: boolean;
   filterable?: boolean;
   width?: string;
-  render?: (value: any, row: T) => React.ReactNode;
+  render?: (value: unknown, row: T) => React.ReactNode;
 }
 
-export interface TableProps<T = any> {
+export interface TableProps<T = Record<string, unknown>> {
   data: T[];
   columns: Column<T>[];
   loading?: boolean;
@@ -45,7 +45,9 @@ export function EnhancedTable<T extends { id: string | number }>({
   columns,
   loading = false,
   onRowClick,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onEdit: _onEdit,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onDelete: _onDelete,
   expandable = false,
   renderExpandedRow,
@@ -60,12 +62,12 @@ export function EnhancedTable<T extends { id: string | number }>({
   const [globalFilter, setGlobalFilter] = useState('');
 
   // Get cell value utility function
-  const getCellValue = (row: T, accessor: keyof T | ((row: T) => any)) => {
+  const getCellValue = useCallback((row: T, accessor: keyof T | ((row: T) => unknown)) => {
     if (typeof accessor === 'function') {
       return accessor(row);
     }
     return row[accessor];
-  };
+  }, []);
 
   // Filtered and sorted data
   const processedData = useMemo(() => {
@@ -114,7 +116,7 @@ export function EnhancedTable<T extends { id: string | number }>({
     }
 
     return filtered;
-  }, [data, columns, sortConfig, filters, globalFilter]);
+  }, [data, columns, sortConfig, filters, globalFilter, getCellValue]);
 
   // Handle sorting
   const handleSort = (column: Column<T>) => {

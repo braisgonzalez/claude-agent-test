@@ -66,7 +66,7 @@ export const DashboardPage: React.FC = () => {
       await createCustomerMutation.mutateAsync(data);
       setShowCreateCustomerModal(false);
       toast.success('Customer created successfully!');
-    } catch (error) {
+    } catch {
       toast.error('Failed to create customer. Please try again.');
     }
   };
