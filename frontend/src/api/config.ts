@@ -1,7 +1,9 @@
 import axios from 'axios';
 
-// API configuration
-export const API_BASE_URL = 'http://localhost:8080/api/v1';
+// API configuration - use environment variable or fallback to localhost
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL 
+  ? `${import.meta.env.VITE_API_BASE_URL}/api/v1`
+  : 'http://localhost:8080/api/v1';
 
 // Basic auth credentials
 const AUTH_CREDENTIALS = btoa('admin:admin123');
