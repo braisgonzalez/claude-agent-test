@@ -37,7 +37,10 @@
       "Bash(gh secret:*)",
       "WebFetch(domain:console.anthropic.com)",
       "Bash(gh secret set:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(gh run list:*)",
+      "Bash(gh run view:*)",
+      "Bash(./scripts/setup-s3-hosting.sh:*)"
     ],
     "deny": []
   }

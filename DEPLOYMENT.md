@@ -35,7 +35,7 @@ The deployment uses the following AWS resources:
 
 - **Region**: us-east-1
 - **S3 Bucket**: brais-claude-code (for frontend)
-- **EC2 Instance**: i-0c5c631508a9d1e93 (172.31.45.188)
+- **EC2 Instance**: i-0c5c631508a9d1e93 (13.217.86.5)
 - **RDS Database**: brais-claude-code.ch2aksogwa9r.us-east-1.rds.amazonaws.com
 - **Security Group**: sg-015054163da20eeea
 
@@ -65,8 +65,8 @@ aws s3 sync dist/ s3://brais-claude-code --delete
 ```bash
 cd backend
 ./mvnw clean package -DskipTests
-scp target/*.jar ec2-user@172.31.45.188:/home/ec2-user/app/app.jar
-ssh ec2-user@172.31.45.188 'cd /home/ec2-user/app && ./start-app.sh'
+scp target/*.jar ec2-user@13.217.86.5:/home/ec2-user/app/app.jar
+ssh ec2-user@13.217.86.5 'cd /home/ec2-user/app && ./start-app.sh'
 ```
 
 ## Access URLs
@@ -74,16 +74,16 @@ ssh ec2-user@172.31.45.188 'cd /home/ec2-user/app && ./start-app.sh'
 After deployment:
 
 - **Frontend**: http://brais-claude-code.s3-website-us-east-1.amazonaws.com/
-- **Backend API**: http://172.31.45.188:8080
-- **Health Check**: http://172.31.45.188:8080/actuator/health
-- **API Documentation**: http://172.31.45.188:8080/swagger-ui.html
+- **Backend API**: http://13.217.86.5:8080
+- **Health Check**: http://13.217.86.5:8080/actuator/health
+- **API Documentation**: http://13.217.86.5:8080/swagger-ui.html
 
 ## Configuration
 
 ### Frontend Environment
 The frontend is configured to connect to the backend at:
 ```
-VITE_API_BASE_URL=http://172.31.45.188:8080
+VITE_API_BASE_URL=http://13.217.86.5:8080
 ```
 
 ### Backend Environment
@@ -102,7 +102,7 @@ The backend uses these production settings:
    - Ensure EC2 security group allows SSH (port 22) from GitHub Actions IPs
 
 2. **Backend health check fails**
-   - Check application logs: `ssh ec2-user@172.31.45.188 'tail -f /home/ec2-user/app/application.log'`
+   - Check application logs: `ssh ec2-user@13.217.86.5 'tail -f /home/ec2-user/app/application.log'`
    - Verify database connectivity
    - Check if port 8080 is open in security group
 
@@ -114,16 +114,16 @@ The backend uses these production settings:
 
 ```bash
 # Check backend status
-curl http://172.31.45.188:8080/actuator/health
+curl http://13.217.86.5:8080/actuator/health
 
 # Check application logs
-ssh ec2-user@172.31.45.188 'tail -100 /home/ec2-user/app/application.log'
+ssh ec2-user@13.217.86.5 'tail -100 /home/ec2-user/app/application.log'
 
 # Check running processes
-ssh ec2-user@172.31.45.188 'ps aux | grep java'
+ssh ec2-user@13.217.86.5 'ps aux | grep java'
 
 # Test API endpoints
-curl -u admin:admin123 http://172.31.45.188:8080/api/v1/customers
+curl -u admin:admin123 http://13.217.86.5:8080/api/v1/customers
 ```
 
 ## Security Notes
