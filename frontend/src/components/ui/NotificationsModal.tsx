@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from './Button';
 import { Input } from './Input';
 import { Select } from './Select';
+import { ModalPortal } from './ModalPortal';
 import { mockNotifications, getNotificationColors, type Notification } from '../../data/mockNotifications';
 import toast from 'react-hot-toast';
 
@@ -76,8 +77,9 @@ export const NotificationsModal: React.FC<NotificationsModalProps> = ({ isOpen, 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] overflow-y-auto" style={{ zIndex: 9999 }}>
-      <div className="flex min-h-screen items-center justify-center p-4">
+    <ModalPortal>
+      <div className="fixed inset-0 overflow-y-auto" style={{ zIndex: 10001 }}>
+        <div className="flex min-h-screen items-center justify-center p-4">
         <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onClick={onClose} />
         
         <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl mx-auto max-h-[90vh] overflow-hidden">
@@ -257,8 +259,9 @@ export const NotificationsModal: React.FC<NotificationsModalProps> = ({ isOpen, 
               </Button>
             </div>
           </div>
+          </div>
         </div>
       </div>
-    </div>
+    </ModalPortal>
   );
 };

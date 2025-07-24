@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { X } from 'lucide-react';
+import { ModalPortal } from './ModalPortal';
 
 interface ModalProps {
   isOpen: boolean;
@@ -54,19 +55,20 @@ export const Modal: React.FC<ModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] overflow-y-auto" style={{ zIndex: 9999 }}>
-      {/* Backdrop */}
-      <div 
-        className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
-        onClick={onClose}
-      />
-      
-      {/* Modal */}
-      <div className="flex min-h-full items-center justify-center p-4">
+    <ModalPortal>
+      <div className="fixed inset-0 overflow-y-auto" style={{ zIndex: 10001 }}>
+        {/* Backdrop */}
         <div 
-          className={`relative w-full ${sizeClasses[size]} bg-white dark:bg-gray-800 rounded-lg shadow-xl`}
-          onClick={(e) => e.stopPropagation()}
-        >
+          className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+          onClick={onClose}
+        />
+        
+        {/* Modal */}
+        <div className="flex min-h-full items-center justify-center p-4">
+          <div 
+            className={`relative w-full ${sizeClasses[size]} bg-white dark:bg-gray-800 rounded-lg shadow-xl`}
+            onClick={(e) => e.stopPropagation()}
+          >
           {/* Header */}
           {title && (
             <div className="flex items-center justify-between p-6 pb-4">
@@ -85,9 +87,10 @@ export const Modal: React.FC<ModalProps> = ({
           {/* Content */}
           <div className={title ? 'p-6 pt-0' : 'p-6'}>
             {children}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </ModalPortal>
   );
 };
