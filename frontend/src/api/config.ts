@@ -1,9 +1,25 @@
 import axios from 'axios';
 
 // API configuration - use environment variable or fallback to localhost
+// Supports both HTTP (local/demo) and HTTPS (production) endpoints
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL 
   ? `${import.meta.env.VITE_API_BASE_URL}/api/v1`
   : 'http://localhost:8080/api/v1';
+
+// SSL/HTTPS Configuration
+// When running over HTTPS, ensure API calls handle mixed content appropriately
+const isHTTPS = window.location.protocol === 'https:';
+const isProduction = import.meta.env.PROD;
+
+// Log configuration for debugging
+if (import.meta.env.DEV) {
+  console.log('API Configuration:', {
+    baseURL: API_BASE_URL,
+    isHTTPS,
+    isProduction,
+    env: import.meta.env.VITE_API_BASE_URL
+  });
+}
 
 // Basic auth credentials
 const AUTH_CREDENTIALS = btoa('admin:admin123');

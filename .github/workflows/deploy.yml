@@ -11,6 +11,7 @@ env:
   S3_BUCKET: brais-claude-code
   EC2_INSTANCE_ID: i-0c5c631508a9d1e93
   EC2_HOST: 13.217.86.5
+  CLOUDFRONT_DISTRIBUTION_ID: ""  # Set this after CloudFront setup
 
 jobs:
   test:
@@ -98,10 +99,15 @@ jobs:
         cd frontend
         aws s3 sync dist/ s3://${{ env.S3_BUCKET }} --delete
         
-    - name: Invalidate CloudFront (if using CDN)
+    - name: Invalidate CloudFront Cache
       run: |
-        # Uncomment if using CloudFront
-        # aws cloudfront create-invalidation --distribution-id YOUR_DISTRIBUTION_ID --paths "/*"
+        if [ -n "${{ env.CLOUDFRONT_DISTRIBUTION_ID }}" ]; then
+          echo "Invalidating CloudFront cache..."
+          aws cloudfront create-invalidation --distribution-id ${{ env.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
+          echo "✅ CloudFront cache invalidated"
+        else
+          echo "⚠️  CloudFront distribution ID not set, skipping cache invalidation"
+        fi
 
   build-and-deploy-backend:
     needs: test
@@ -294,7 +300,12 @@ jobs:
     - name: Post deployment summary
       run: |
         echo "🚀 Deployment Summary:"
-        echo "📦 Frontend: http://${{ env.S3_BUCKET }}.s3-website-${{ env.AWS_REGION }}.amazonaws.com/"
+        if [ -n "${{ env.CLOUDFRONT_DISTRIBUTION_ID }}" ]; then
+          echo "📦 Frontend (HTTPS): https://[cloudfront-domain]"
+          echo "📦 Frontend (S3):    http://${{ env.S3_BUCKET }}.s3-website-${{ env.AWS_REGION }}.amazonaws.com/"
+        else
+          echo "📦 Frontend: http://${{ env.S3_BUCKET }}.s3-website-${{ env.AWS_REGION }}.amazonaws.com/"
+        fi
         echo "🔗 Backend API: http://${{ env.EC2_HOST }}:8080"
         echo "💚 Health Check: http://${{ env.EC2_HOST }}:8080/actuator/health"
         echo "📊 API Docs: http://${{ env.EC2_HOST }}:8080/swagger-ui.html"
