@@ -11,7 +11,7 @@ env:
   S3_BUCKET: brais-claude-code
   EC2_INSTANCE_ID: i-0c5c631508a9d1e93
   EC2_HOST: 13.217.86.5
-  CLOUDFRONT_DISTRIBUTION_ID: ""  # Set this after CloudFront setup
+  CLOUDFRONT_DISTRIBUTION_ID: "E50H2W7S8MHH1"  # CloudFront distribution for HTTPS
 
 jobs:
   test:
@@ -301,7 +301,7 @@ jobs:
       run: |
         echo "🚀 Deployment Summary:"
         if [ -n "${{ env.CLOUDFRONT_DISTRIBUTION_ID }}" ]; then
-          echo "📦 Frontend (HTTPS): https://[cloudfront-domain]"
+          echo "📦 Frontend (HTTPS): https://d31mot4ub2zsod.cloudfront.net"
           echo "📦 Frontend (S3):    http://${{ env.S3_BUCKET }}.s3-website-${{ env.AWS_REGION }}.amazonaws.com/"
         else
           echo "📦 Frontend: http://${{ env.S3_BUCKET }}.s3-website-${{ env.AWS_REGION }}.amazonaws.com/"
