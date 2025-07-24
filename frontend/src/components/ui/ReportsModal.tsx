@@ -161,11 +161,11 @@ export const ReportsModal: React.FC<ReportsModalProps> = ({ isOpen, onClose }) =
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex min-h-screen items-center justify-center p-4">
+    <div className="fixed inset-0 z-[60] overflow-y-auto">
+      <div className="flex min-h-screen items-center justify-center p-2 sm:p-4">
         <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onClick={onClose} />
         
-        <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
+        <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-[95vw] sm:max-w-[90vw] lg:max-w-6xl mx-auto max-h-[95vh] sm:max-h-[90vh] overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center space-x-3">
@@ -186,10 +186,10 @@ export const ReportsModal: React.FC<ReportsModalProps> = ({ isOpen, onClose }) =
           </div>
 
           {/* Controls */}
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+          <div className="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+            <div className="flex flex-col gap-4">
               {/* Report Type Tabs */}
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
                 {reportTypes.map((type) => {
                   const Icon = type.icon;
                   return (
@@ -210,43 +210,47 @@ export const ReportsModal: React.FC<ReportsModalProps> = ({ isOpen, onClose }) =
               </div>
 
               {/* Actions */}
-              <div className="flex items-center gap-3">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 justify-center sm:justify-end">
                 <Select
                   value={dateRange}
                   onChange={(e) => setDateRange(e.target.value)}
                   options={dateRangeOptions}
-                  className="w-40"
+                  className="w-full sm:w-40"
                 />
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={handleRefresh}
-                  loading={isRefreshing}
-                  icon={RefreshCw}
-                >
-                  Refresh
-                </Button>
-                <Button 
-                  variant="primary" 
-                  size="sm" 
-                  onClick={handleExport}
-                  icon={Download}
-                >
-                  Export
-                </Button>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handleRefresh}
+                    loading={isRefreshing}
+                    icon={RefreshCw}
+                    className="flex-1 sm:flex-none"
+                  >
+                    Refresh
+                  </Button>
+                  <Button 
+                    variant="primary" 
+                    size="sm" 
+                    onClick={handleExport}
+                    icon={Download}
+                    className="flex-1 sm:flex-none"
+                  >
+                    Export
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Content */}
-          <div className="overflow-y-auto" style={{ maxHeight: 'calc(90vh - 12rem)' }}>
-            <div className="p-6">
+          <div className="overflow-y-auto overflow-x-auto" style={{ maxHeight: 'calc(95vh - 12rem)' }}>
+            <div className="p-4 sm:p-6 min-w-0">
               {/* Metrics Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
                 {getCurrentMetrics().map((metric, index) => {
                   const Icon = metric.icon;
                   return (
-                    <div key={index} className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div key={index} className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
                       <div className="flex items-center justify-between mb-4">
                         <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
                           <Icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
@@ -275,8 +279,8 @@ export const ReportsModal: React.FC<ReportsModalProps> = ({ isOpen, onClose }) =
               </div>
 
               {/* Chart Placeholder */}
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
-                <div className="flex items-center justify-between mb-6">
+              <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                     {activeReport.charAt(0).toUpperCase() + activeReport.slice(1)} Trend
                   </h3>
@@ -287,7 +291,7 @@ export const ReportsModal: React.FC<ReportsModalProps> = ({ isOpen, onClose }) =
                     </span>
                   </div>
                 </div>
-                <div className="h-64 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl flex items-center justify-center">
+                <div className="h-48 sm:h-64 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl flex items-center justify-center">
                   <div className="text-center">
                     <BarChart3 className="w-16 h-16 text-blue-400 dark:text-blue-500 mx-auto mb-4" />
                     <p className="text-gray-600 dark:text-gray-400 text-lg font-medium mb-2">
@@ -301,9 +305,9 @@ export const ReportsModal: React.FC<ReportsModalProps> = ({ isOpen, onClose }) =
               </div>
 
               {/* Detailed Tables */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                 {/* Top Performers */}
-                <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
+                <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                     Top Performers
                   </h3>
@@ -328,7 +332,7 @@ export const ReportsModal: React.FC<ReportsModalProps> = ({ isOpen, onClose }) =
                 </div>
 
                 {/* Recent Activity */}
-                <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
+                <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                     Recent Activity
                   </h3>
@@ -360,16 +364,16 @@ export const ReportsModal: React.FC<ReportsModalProps> = ({ isOpen, onClose }) =
           </div>
 
           {/* Footer */}
-          <div className="p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-            <div className="flex justify-between items-center">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+          <div className="p-4 sm:p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+              <p className="text-sm text-gray-500 dark:text-gray-400 text-center sm:text-left">
                 Last updated: {new Date().toLocaleString()}
               </p>
-              <div className="flex space-x-3">
-                <Button variant="outline" onClick={onClose}>
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
+                <Button variant="outline" onClick={onClose} fullWidth className="sm:w-auto">
                   Close
                 </Button>
-                <Button variant="primary" onClick={handleExport}>
+                <Button variant="primary" onClick={handleExport} fullWidth className="sm:w-auto">
                   Generate Full Report
                 </Button>
               </div>
