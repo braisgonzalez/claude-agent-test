@@ -161,11 +161,11 @@ export const ReportsModal: React.FC<ReportsModalProps> = ({ isOpen, onClose }) =
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] overflow-y-auto">
+    <div className="fixed inset-0 z-[9999] overflow-y-auto" style={{ zIndex: 9999 }}>
       <div className="flex min-h-screen items-center justify-center p-2 sm:p-4">
         <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onClick={onClose} />
         
-        <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-[95vw] sm:max-w-[90vw] lg:max-w-6xl mx-auto max-h-[95vh] sm:max-h-[90vh] overflow-hidden">
+        <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-[98vw] sm:max-w-[95vw] lg:max-w-6xl mx-auto max-h-[98vh] sm:max-h-[95vh] overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center space-x-3">
@@ -243,7 +243,7 @@ export const ReportsModal: React.FC<ReportsModalProps> = ({ isOpen, onClose }) =
           </div>
 
           {/* Content */}
-          <div className="overflow-y-auto overflow-x-auto" style={{ maxHeight: 'calc(95vh - 12rem)' }}>
+          <div className="overflow-y-auto overflow-x-auto" style={{ maxHeight: 'calc(98vh - 12rem)' }}>
             <div className="p-4 sm:p-6 min-w-0">
               {/* Metrics Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
