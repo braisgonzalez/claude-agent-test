@@ -3,6 +3,7 @@ import { X, Save, User, Shield, Bell, Palette, Globe, Database } from 'lucide-re
 import { Button } from './Button';
 import { Input } from './Input';
 import { Select } from './Select';
+import { ModalPortal } from './ModalPortal';
 import toast from 'react-hot-toast';
 
 interface SettingsModalProps {
@@ -84,8 +85,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] overflow-y-auto">
-      <div className="flex min-h-screen items-center justify-center p-4">
+    <ModalPortal>
+      <div className="fixed inset-0 overflow-y-auto" style={{ zIndex: 10001 }}>
+        <div className="flex min-h-screen items-center justify-center p-4">
         <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onClick={onClose} />
         
         <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl mx-auto max-h-[90vh] overflow-hidden">
@@ -392,8 +394,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
               </Button>
             </div>
           </div>
+          </div>
         </div>
       </div>
-    </div>
+    </ModalPortal>
   );
 };

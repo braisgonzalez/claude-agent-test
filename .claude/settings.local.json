@@ -42,7 +42,14 @@
       "Bash(gh run view:*)",
       "Bash(./scripts/setup-s3-hosting.sh:*)",
       "Bash(aws ec2:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(npm test:*)",
+      "Bash(npm run:*)",
+      "Bash(gh pr merge:*)",
+      "Bash(git branch:*)",
+      "Bash(gh pr view:*)",
+      "Bash(git branch:*)",
+      "Bash(gh workflow:*)"
     ],
     "deny": []
   }

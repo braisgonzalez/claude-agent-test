@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Wifi, Database, Server, Shield, RefreshCw, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
 import { Button } from './Button';
+import { ModalPortal } from './ModalPortal';
 import toast from 'react-hot-toast';
 
 interface SystemHealthModalProps {
@@ -125,8 +126,9 @@ export const SystemHealthModal: React.FC<SystemHealthModalProps> = ({ isOpen, on
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] overflow-y-auto">
-      <div className="flex min-h-screen items-center justify-center p-4">
+    <ModalPortal>
+      <div className="fixed inset-0 overflow-y-auto" style={{ zIndex: 10001 }}>
+        <div className="flex min-h-screen items-center justify-center p-4">
         <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onClick={onClose} />
         
         <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl mx-auto max-h-[90vh] overflow-hidden">
@@ -281,8 +283,9 @@ export const SystemHealthModal: React.FC<SystemHealthModalProps> = ({ isOpen, on
               </Button>
             </div>
           </div>
+          </div>
         </div>
       </div>
-    </div>
+    </ModalPortal>
   );
 };
