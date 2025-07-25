@@ -8,6 +8,8 @@ info:
     email: dev@company.com
 
 servers:
+  - url: https://d31mot4ub2zsod.cloudfront.net/api/v1
+    description: Production server
   - url: http://localhost:8080/api/v1
     description: Development server
 
@@ -734,13 +736,12 @@ components:
             $ref: '#/components/schemas/Error'
 
   securitySchemes:
-    BearerAuth:
+    BasicAuth:
       type: http
-      scheme: bearer
-      bearerFormat: JWT
+      scheme: basic
 
 security:
-  - BearerAuth: []
+  - BasicAuth: []
 
 tags:
   - name: Users

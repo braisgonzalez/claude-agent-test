@@ -69,3 +69,5 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
     operations-sorter: method
+  use-management-port: false
+  override-with-generic-response: false
