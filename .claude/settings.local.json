@@ -49,7 +49,10 @@
       "Bash(git branch:*)",
       "Bash(gh pr view:*)",
       "Bash(git branch:*)",
-      "Bash(gh workflow:*)"
+      "Bash(gh workflow:*)",
+      "Bash(scp:*)",
+      "Bash(ssh:*)",
+      "Bash(gh run:*)"
     ],
     "deny": []
   }

@@ -11,6 +11,7 @@ env:
   S3_BUCKET: brais-claude-code
   EC2_INSTANCE_ID: i-0c5c631508a9d1e93
   EC2_HOST: 13.217.86.5
+  CLOUDFRONT_DISTRIBUTION_ID: E50H2W7S8MHH1
 
 jobs:
   test:
@@ -83,8 +84,6 @@ jobs:
       run: |
         cd frontend
         npm run build
-      env:
-        VITE_API_BASE_URL: http://${{ env.EC2_HOST }}:8080
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
@@ -98,10 +97,8 @@ jobs:
         cd frontend
         aws s3 sync dist/ s3://${{ env.S3_BUCKET }} --delete
         
-    - name: Invalidate CloudFront (if using CDN)
-      run: |
-        # Uncomment if using CloudFront
-        # aws cloudfront create-invalidation --distribution-id YOUR_DISTRIBUTION_ID --paths "/*"
+    - name: Invalidate CloudFront
+      run: aws cloudfront create-invalidation --distribution-id ${{ env.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
 
   build-and-deploy-backend:
     needs: test
